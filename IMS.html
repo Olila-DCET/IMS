@@ -14,6 +14,14 @@
         <input type="text" id="search" placeholder="Search items..." onkeyup="searchItem()">
         <button onclick="openModal()">Add New Item</button>
 
+        <select id="sortOption" onchange="sortInventory()">
+    <option value="">Sort By</option>
+    <option value="name">Name (A-Z)</option>
+    <option value="quantity">Quantity (Low-High)</option>
+    <option value="price">Price (Low-High)</option>
+    <option value="date">Date Added (Newest First)</option>
+       </select>
+    
         <table>
             <thead>
                 <tr>
