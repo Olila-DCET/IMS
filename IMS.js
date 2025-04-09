@@ -144,4 +144,8 @@ function loadFromLocalStorage() {
 window.onload = loadFromLocalStorage;
 
 window.onclick = function (event) {
-    if (event.target == document.getElementById('itemModal
+    const modal = document.getElementById('itemModal');
+    if (event.target === modal) {
+        closeModal();
+    }
+};
