@@ -1,4 +1,3 @@
-
 let inventory = [];
 
 function openModal() {
@@ -25,9 +24,18 @@ function addItem() {
     const reader = new FileReader();
     reader.readAsDataURL(imageInput);
     reader.onload = function () {
-        const dateAdded = new Date().toLocaleString();
-        const item = { id: Date.now(), name, details, quantity, price, dateAdded, image: reader.result };
+        const dateAdded = new Date().toISOString(); // use ISO for better sorting
+        const item = {
+            id: Date.now(),
+            name,
+            details,
+            quantity: parseInt(quantity),
+            price: parseFloat(price),
+            dateAdded,
+            image: reader.result
+        };
         inventory.push(item);
+        saveToLocalStorage();
         updateInventory();
         closeModal();
     };
@@ -35,6 +43,7 @@ function addItem() {
 
 function deleteItem(id) {
     inventory = inventory.filter(item => item.id !== id);
+    saveToLocalStorage();
     updateInventory();
 }
 
@@ -60,8 +69,8 @@ function updateInventory(items = inventory) {
                 <td>${item.name}</td>
                 <td>${item.details}</td>
                 <td>${item.quantity}</td>
-                <td>$${item.price}</td>
-                <td>${item.dateAdded}</td>
+                <td>$${item.price.toFixed(2)}</td>
+                <td>${new Date(item.dateAdded).toLocaleString()}</td>
                 <td>
                     <button class="edit-btn" onclick="editItem(${item.id})">Edit</button>
                     <button class="delete-btn" onclick="deleteItem(${item.id})">Delete</button>
@@ -96,9 +105,43 @@ function previewImage(event) {
     reader.readAsDataURL(event.target.files[0]);
 }
 
+function sortInventory() {
+    const option = document.getElementById('sortOption').value;
+    let sorted = [...inventory];
 
-window.onclick = function(event) {
-    if (event.target == document.getElementById('itemModal')) {
-        closeModal();
+    switch (option) {
+        case 'name':
+            sorted.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+        case 'quantity':
+            sorted.sort((a, b) => a.quantity - b.quantity);
+            break;
+        case 'price':
+            sorted.sort((a, b) => a.price - b.price);
+            break;
+        case 'date':
+            sorted.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+            break;
+        default:
+            break;
+    }
+
+    updateInventory(sorted);
+}
+
+function saveToLocalStorage() {
+    localStorage.setItem('inventory', JSON.stringify(inventory));
+}
+
+function loadFromLocalStorage() {
+    const data = localStorage.getItem('inventory');
+    if (data) {
+        inventory = JSON.parse(data);
+        updateInventory();
     }
 }
+
+window.onload = loadFromLocalStorage;
+
+window.onclick = function (event) {
+    if (event.target == document.getElementById('itemModal
