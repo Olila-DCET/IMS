@@ -17,7 +17,7 @@ function addItem() {
     const imageInput = document.getElementById('imageInput').files[0];
 
     if (name === '' || details === '' || quantity === '' || price === '' || !imageInput) {
-        alert('Please fill all fields and upload an image');
+        showPopup('error', 'Please fill all fields and upload an image.');
         return;
     }
 
@@ -38,6 +38,7 @@ function addItem() {
         saveToLocalStorage();
         updateInventory();
         closeModal();
+        showPopup('success', 'Item added successfully!');
     };
 }
 
@@ -149,3 +150,14 @@ window.onclick = function (event) {
         closeModal();
     }
 };
+
+
+function showPopup(type, message) {
+    const popup = document.createElement('div');
+    popup.classList.add('popup', type);
+    popup.textContent = message;
+    document.body.appendChild(popup);
+    setTimeout(() => {
+        popup.remove();
+    }, 5000);
+}
